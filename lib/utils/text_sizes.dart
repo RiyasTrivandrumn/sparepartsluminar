@@ -58,6 +58,17 @@ static final TextStyle DescriptionButton =TextStyle(
   fontWeight: FontWeight.w500
 );
 
+static final TextStyle Checkout =TextStyle(
+  fontSize: 17,
+  color: Colors.black,
+  fontWeight: FontWeight.w600
+);
+
+
+
+
+
+
 
 
 

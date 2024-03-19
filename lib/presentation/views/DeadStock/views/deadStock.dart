@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/presentation/views/DeadStock/controller/deadController.dart';
 import 'package:spare_parts/presentation/views/DeadStock/widgets/deadcard.dart';
-import 'package:spare_parts/presentation/views/spareList/Controller/list_controller.dart';
+
 import 'package:spare_parts/utils/text_sizes.dart';
-import 'package:spare_parts/presentation/views/spareList/widgets/listcard.dart';
+
 
 class DeadStock extends StatelessWidget {
   const DeadStock();
@@ -59,7 +59,7 @@ class DeadStock extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: value.deadlist.length,
                         itemBuilder: (context, index) {
-                          return DeadCard(image:value.deadlist[index].itemImage ,title:value.deadlist[index].itemName ,price:value.deadlist[index].price ,manufacturer:value.deadlist[index].manufacturer ,
+                          return DeadCard(image:value.deadlist[index].itemImage ,title:value.deadlist[index].deadstockItem ,price:value.deadlist[index].price ,manufacturer:value.deadlist[index].manufacturer ,
                           
                           );
                         },

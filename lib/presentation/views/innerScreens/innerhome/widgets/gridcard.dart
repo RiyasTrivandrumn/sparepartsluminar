@@ -19,12 +19,15 @@ final id;
          Navigator.of(context).push(MaterialPageRoute(builder:(context) => SpareList(id:id,title:catogery),));
       },
       child: Card(
-        child: Column(
-          children: [Expanded( flex: 3,child:Image.network(
-             "http://10.0.2.2:8000$image"
-            )),
-          Expanded( flex: 1, child: Text(catogery,style:CustomStyle.MediumTextStyle,))],
+        child: Container(
           
+          child: Column(
+            children: [Expanded( flex: 3,child:Image.network(
+               "http://10.0.2.2:8000$image"
+              )),
+            Expanded( flex: 2, child: Text(catogery,style:CustomStyle.MediumTextStyle,))],
+            
+          ),
         ),
       ),
     );

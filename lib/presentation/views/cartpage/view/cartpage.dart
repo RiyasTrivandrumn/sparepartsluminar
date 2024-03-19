@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/presentation/views/cartpage/Widgets/cart_card.dart';
 import 'package:spare_parts/presentation/views/cartpage/cartservice/remove_from_cart.dart';
 import 'package:spare_parts/presentation/views/cartpage/controller/cart_controller.dart';
+import 'package:spare_parts/presentation/views/checkoutPage/view/checkout.dart';
 import 'package:spare_parts/utils/text_sizes.dart';
 
 class CartPage extends StatelessWidget {
@@ -90,9 +91,11 @@ class CartPage extends StatelessWidget {
                         style: CustomStyle.PriceText,
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder:(context) => CheckOut(),));
+                        },
                         child: Text(
-                          "Place Order",
+                          "Checkout",
                           style: CustomStyle.MediumTextStyle,
                         ),
                         style: ButtonStyle(

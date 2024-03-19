@@ -64,8 +64,8 @@ class SpareController {
                  ScaffoldMessenger.of(ctx).showSnackBar(
                   
 
-          SnackBar(content: Text(res["detail"]),
-          backgroundColor:Colors.green,
+          SnackBar(content: Text("Invalid username and Password"),
+          backgroundColor:Colors.red,
           duration: Duration(seconds: 2),)
          );
 
