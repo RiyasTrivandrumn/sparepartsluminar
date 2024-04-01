@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spare_parts/presentation/views/DescriptPage/controller/description_controller.dart';
 import 'package:spare_parts/presentation/views/cartpage/cartservice/add_to_cart.dart';
 
 import 'package:spare_parts/presentation/views/cartpage/cartservice/get_from_cart.dart';
@@ -36,6 +37,7 @@ class CartController extends ChangeNotifier {
     try {
       await Remove.removeitem(id: id);
       await getList();
+      
     } catch (e) {
       print("Error udating cart : $e");
     }

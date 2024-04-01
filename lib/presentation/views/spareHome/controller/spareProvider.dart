@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spare_parts/presentation/orderHistory/order_history.dart';
 import 'package:spare_parts/presentation/views/DeadStock/views/deadStock.dart';
 import 'package:spare_parts/presentation/views/cartpage/view/cartpage.dart';
 import 'package:spare_parts/presentation/views/innerScreens/innerhome/innerHome.dart';
@@ -9,7 +10,7 @@ class SpareProvider extends ChangeNotifier{
    int selectedIndex=0;
 
 
-  List<Widget> screens=[InnerHome(),DeadStock(),Profile(),CartPage()];
+  List<Widget> screens=[InnerHome(),DeadStock(),Profile(),History(),CartPage(),];
 
 
 

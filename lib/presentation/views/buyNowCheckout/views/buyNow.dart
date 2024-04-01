@@ -1,30 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:spare_parts/presentation/orderHistory/order_history.dart';
-import 'package:spare_parts/presentation/orderHistory/widgets/history_tile.dart';
-import 'package:spare_parts/presentation/views/cartpage/controller/cart_controller.dart';
-import 'package:spare_parts/presentation/views/checkoutPage/service/checkService.dart';
-import 'package:spare_parts/presentation/views/checkoutPage/widgets/checktile.dart';
-import 'package:spare_parts/presentation/views/innerScreens/innerhome/innerHome.dart';
+import 'package:spare_parts/presentation/views/buyNowCheckout/service/buy_checkout_ser.dart';
+import 'package:spare_parts/utils/apputils.dart';
 import 'package:spare_parts/utils/text_sizes.dart';
 
-class CheckOut extends StatefulWidget {
-  const CheckOut({super.key});
+class ByNowCheckout extends StatefulWidget {
+  final String image;
+  final String title;
+  final String price;
+  final int id;
+
+  ByNowCheckout(
+      {super.key,
+      required this.image,
+      required this.title,
+      required this.price,
+      required this.id});
 
   @override
-  State<CheckOut> createState() => _CheckOutState();
+  State<ByNowCheckout> createState() => _ByNowCheckoutState();
 }
 
-class _CheckOutState extends State<CheckOut> {
+class _ByNowCheckoutState extends State<ByNowCheckout> {
   final _razorpay = Razorpay();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController adressController = TextEditingController();
 
+  final TextEditingController notesController = TextEditingController();
+
   void openCheckout(amount) {
-    amount = amount * 100;
+    double doubleValue = double.parse(amount);
+    int value = doubleValue.toInt();
+
+    value = value * 100;
 
     var options = {
       'method': {
@@ -34,7 +47,7 @@ class _CheckOutState extends State<CheckOut> {
         'wallet': true,
       },
       'key': 'rzp_test_uRWyf2SUzmHtw9',
-      'amount': amount,
+      'amount': value,
       'name': 'Prestige Pvt Ltd',
       'prefill': {'contact': '7563773474', 'email': 'prestige8@gmail.com'},
       'external': {
@@ -50,22 +63,24 @@ class _CheckOutState extends State<CheckOut> {
   }
 
   void handlePaymentSuccess(PaymentSuccessResponse response) async {
-    await CheckOutService.placeOrder(adress: adressController.text.trim());
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => History(),
-        ),
-        (route) => false);
+    await CheckOutService.setData(
+            id: widget.id,
+            address: adressController.text.trim(),
+            notes: notesController.text.trim())
+        .then((_) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => History(),
+              ),
+            ));
 
     Fluttertoast.showToast(
         msg: "Payment Succesful" + response.paymentId!,
         toastLength: Toast.LENGTH_SHORT);
-
-
   }
 
   void handlePaymentError(PaymentFailureResponse response) {
+    print(response.message);
     Fluttertoast.showToast(
         msg: "Payment Fail" + response.message.toString(),
         toastLength: Toast.LENGTH_SHORT);
@@ -97,6 +112,11 @@ class _CheckOutState extends State<CheckOut> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back)),
         centerTitle: true,
         title: Text(
           "Checkout",
@@ -110,7 +130,7 @@ class _CheckOutState extends State<CheckOut> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 160,
+              height: 255,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -135,6 +155,22 @@ class _CheckOutState extends State<CheckOut> {
                         hintText: "Please enter your Delivery Adress",
                         border: OutlineInputBorder(),
                       ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Delivery notes';
+                        }
+                        return null;
+                      },
+                      controller: notesController,
+                      decoration: InputDecoration(
+                        hintText: "Please enter your Delivery notes",
+                        border: OutlineInputBorder(),
+                      ),
                     )
                   ],
                 ),
@@ -147,7 +183,7 @@ class _CheckOutState extends State<CheckOut> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Order Summary",
+                "Product details",
                 style: CustomStyle.Checkout,
               ),
             ),
@@ -155,54 +191,37 @@ class _CheckOutState extends State<CheckOut> {
               thickness: 5,
               color: Colors.grey.shade300,
             ),
-            Consumer<CartController>(
-              builder: (context, value, child) {
-                return ListView.separated(
-                  itemCount: value.model?.cart?.length ?? 0,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final item = value.model!.cart![index];
-                    return CheckCard(
-                      title: item.itemDetails?.itemName,
-                      image: item.itemDetails?.itemImage,
-                      quantity: item.quantity,
-                      price: item.itemDetails?.price,
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                      thickness: 2,
-                    );
-                  },
-                );
-              },
-            ),
             Padding(
-              padding: const EdgeInsets.all(4),
-              child: Divider(
-                thickness: 5,
-                color: Colors.grey.shade300,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Consumer<CartController>(
-                      builder: (context, value, child) {
-                        return Text(
-                          "Total Price:₹${value.model?.total} ",
-                          style: CustomStyle.Checkout,
-                        );
-                      },
-                    )),
-                Divider(
-                  thickness: 5,
-                  color: Colors.grey.shade300,
+              padding: const EdgeInsets.all(13.0),
+              child: Container(
+                height: 140,
+                child: Row(
+                  children: [
+                    Image.network(AppUtils.baseUrl + widget.image),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.title,
+                              style: CustomStyle.LargeTextStyle,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              "₹" + widget.price,
+                              style: CustomStyle.PriceText,
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -210,20 +229,17 @@ class _CheckOutState extends State<CheckOut> {
       bottomNavigationBar: Container(
         height: 60,
         color: Colors.yellow.shade600,
-        child: Center(child: Consumer<CartController>(
-          builder: (context, value, child) {
-            return InkWell(
+        child: Center(
+            child: InkWell(
                 onTap: () {
                   if (_formKey.currentState!.validate()) {
-                    openCheckout(value.model!.total);
+                    openCheckout(widget.price);
                   }
                 },
                 child: Text(
                   "Proceed to pay",
                   style: CustomStyle.DescriptionTitle,
-                ));
-          },
-        )),
+                ))),
       ),
     );
   }

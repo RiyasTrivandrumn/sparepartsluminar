@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/presentation/views/DescriptPage/controller/description_controller.dart';
 import 'package:spare_parts/presentation/views/cartpage/Widgets/incre_decre.dart';
 import 'package:spare_parts/presentation/views/cartpage/cartservice/remove_from_cart.dart';
 import 'package:spare_parts/presentation/views/cartpage/controller/cart_controller.dart';
@@ -59,8 +60,16 @@ class CartCard extends StatelessWidget {
 
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton.icon(onPressed:() {
-                       Provider.of<CartController>(context, listen: false).updateCart(id: itemId);
+                    child: ElevatedButton.icon(onPressed:() async{
+                      await  Provider.of<CartController>(context, listen: false).updateCart(id: itemId);
+
+
+
+                      Provider.of<DespController>(context,listen: false).checkItemInCart(id: itemId);
+
+                      
+
+
                     
                       
                     }, icon:Icon(Icons.delete,color: Colors.red.shade600,), label:Text("Remove item",style:TextStyle(color: Colors.grey.shade600),)),
